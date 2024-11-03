@@ -25,10 +25,10 @@ class CHStartState: CHGameState {
     weak var context: CHGameContext?
     private var coolDownDuration: TimeInterval = 0.7
     
-    let testNode = SKNode()
-    let testLabel = SKLabelNode(text: "TEST")
+    let menuNode = SKNode()
     let generator = GridGenerator()
     let buttonNode = SKSpriteNode(imageNamed: "play")
+    let mundurik = SKSpriteNode(imageNamed: "mundurik")
     
     init(scene: CHGameScene, context: CHGameContext) {
         self.scene = scene
@@ -42,8 +42,15 @@ class CHStartState: CHGameState {
     
     override func didEnter(from previousState: GKState?) {
         print("did enter StartState")
-        
         setupUI()
+    }
+    
+    override func willExit(to nextState: GKState) {
+        menuNode.removeAllActions()
+        menuNode.run(SKAction.fadeOut(withDuration: 1.0)) {
+            self.menuNode.removeAllChildren()
+            self.menuNode.removeFromParent()
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -51,7 +58,6 @@ class CHStartState: CHGameState {
         let touchLocation = touch.location(in: scene!)
         
         if buttonNode.contains(touchLocation) {
-            // Button was tapped
             let grid = generator.generateGrid()
             generator.printGrid(grid)
             print("===================")
@@ -64,31 +70,21 @@ class CHStartState: CHGameState {
 // MARK: Setup
 extension CHStartState {
     func setupUI() {
-        let fontSize: CGFloat = 118
-        
-        testLabel.fontSize = fontSize
-        testLabel.fontName = "SF-Pro-Rounded"
-        testLabel.alpha = 0.0
-        testLabel.position = CGPoint(x: 0, y: 0)
-        
-        testNode.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.midY)
-        testNode.zPosition = -1
-        testNode.alpha = 1.0
-        
-        testNode.addChild(testLabel)
-        scene?.addChild(testNode)
-        
-        buttonNode.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.midY - 200) // Position below label
-        buttonNode.size = CGSize(width: 100, height: 100) // Set appropriate size for button
-        buttonNode.zPosition = 1 // Ensure it's on top
-        scene?.addChild(buttonNode)
+        buttonNode.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.midY)
+        buttonNode.size = CGSize(width: 100, height: 100)
+        buttonNode.zPosition = 1
+        menuNode.addChild(buttonNode)
+
+        mundurik.size = CGSize(width: 365, height: 332.56)
+        mundurik.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.minY + 50)
+        menuNode.addChild(mundurik)
+        scene?.addChild(menuNode)
     }
 }
 
 // MARK: Helpers
 extension CHStartState {
     func handleTap(_ touches: Set<UITouch>) {
-        animateLabel(testLabel)
         print("tapping")
         gameScene.incrementScore()
     }

@@ -25,7 +25,7 @@ class CHGameScene: SKScene {
     }
     
     override func didMove(to view: SKView) {
-        setupScene()
+        self.setupScene()
         context.stateMachine?.enter(CHStartState.self)
     }
 }
@@ -33,7 +33,8 @@ class CHGameScene: SKScene {
 // MARK: Setup
 extension CHGameScene {
     func setupScene() {
-        setupCamera()
+        self.setupCamera()
+        self.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1.0)
     }
     
     private func setupCamera() {

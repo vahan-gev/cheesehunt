@@ -26,7 +26,8 @@ class CHGameContext {
     func configureStates() {
         stateMachine = GKStateMachine(
             states: [
-                CHStartState(scene: scene, context: self)
+                CHStartState(scene: scene, context: self),
+                CHGameState(scene: scene, context: self)
             ]
         )
     }

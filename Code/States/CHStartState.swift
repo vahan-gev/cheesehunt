@@ -8,32 +8,16 @@
 import GameplayKit
 import SpriteKit
 
-
-class CHGameState: GKState {
-    unowned let gameScene: CHGameScene
-    
-    init(gameScene: CHGameScene) {
-        self.gameScene = gameScene
-        super.init()
-    }
-    
-    func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {   }
-}
-
-class CHStartState: CHGameState {
-    weak var scene: CHGameScene?
-    weak var context: CHGameContext?
+class CHStartState: CHGeneralState {
     private var coolDownDuration: TimeInterval = 0.7
     
     let menuNode = SKNode()
-    let generator = GridGenerator()
     let buttonNode = SKSpriteNode(imageNamed: "play")
     let mundurik = SKSpriteNode(imageNamed: "mundurik")
     
     init(scene: CHGameScene, context: CHGameContext) {
-        self.scene = scene
-        self.context = context
-        super.init(gameScene: scene)
+
+        super.init(gameScene: scene, context: context)
     }
     
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
@@ -47,7 +31,7 @@ class CHStartState: CHGameState {
     
     override func willExit(to nextState: GKState) {
         menuNode.removeAllActions()
-        menuNode.run(SKAction.fadeOut(withDuration: 1.0)) {
+        menuNode.run(SKAction.fadeOut(withDuration: 0.3)) {
             self.menuNode.removeAllChildren()
             self.menuNode.removeFromParent()
         }
@@ -55,12 +39,10 @@ class CHStartState: CHGameState {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
-        let touchLocation = touch.location(in: scene!)
+        let touchLocation = touch.location(in: gameScene)
         
         if buttonNode.contains(touchLocation) {
-            let grid = generator.generateGrid()
-            generator.printGrid(grid)
-            print("===================")
+            gameScene.context.stateMachine?.enter(CHGameState.self)
         } else {
             handleTap(touches)
         }
@@ -78,7 +60,7 @@ extension CHStartState {
         mundurik.size = CGSize(width: 365, height: 332.56)
         mundurik.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.minY + 50)
         menuNode.addChild(mundurik)
-        scene?.addChild(menuNode)
+        gameScene.addChild(menuNode)
     }
 }
 

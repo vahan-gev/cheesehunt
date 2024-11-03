@@ -78,7 +78,7 @@ extension CHGameScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let state = context.stateMachine?.currentState as? CHGameState {
+        if let state = context.stateMachine?.currentState as? CHGeneralState {
             state.touchesBegan(touches, with: event)
         }
     }

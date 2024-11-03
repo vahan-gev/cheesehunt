@@ -13,8 +13,8 @@ enum BlockType {
 }
 
 class GridGenerator {
-    private let WIDTH = 5
-    private let HEIGHT = 7
+    private let WIDTH = 7
+    private let HEIGHT = 10
     
     struct Position: Hashable {
         let x: Int

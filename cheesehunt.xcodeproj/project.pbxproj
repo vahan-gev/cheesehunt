@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C01FA712CD3579400DA5BF0 /* CHGridGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C01FA702CD3578D00DA5BF0 /* CHGridGenerator.swift */; };
 		7CC862F32CCF50C700C1F2F2 /* CHGameContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC862F22CCF50C300C1F2F2 /* CHGameContext.swift */; };
 		7CC862F52CCF50EA00C1F2F2 /* CHGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC862F42CCF50E800C1F2F2 /* CHGameScene.swift */; };
 		7CC863042CCF514F00C1F2F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7CC862FC2CCF514F00C1F2F2 /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7C01FA702CD3578D00DA5BF0 /* CHGridGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHGridGenerator.swift; sourceTree = "<group>"; };
 		7CC862F22CCF50C300C1F2F2 /* CHGameContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHGameContext.swift; sourceTree = "<group>"; };
 		7CC862F42CCF50E800C1F2F2 /* CHGameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHGameScene.swift; sourceTree = "<group>"; };
 		7CC862FC2CCF514F00C1F2F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 		7CC863212CCF5E8700C1F2F2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				7C01FA702CD3578D00DA5BF0 /* CHGridGenerator.swift */,
 				7CC863172CCF5E3A00C1F2F2 /* CHGameInfo.swift */,
 				7CC863182CCF5E3A00C1F2F2 /* CHLayoutInfo.swift */,
 			);
@@ -212,6 +215,7 @@
 				7CC863152CCF5E2300C1F2F2 /* Dependencies.swift in Sources */,
 				7CC862F32CCF50C700C1F2F2 /* CHGameContext.swift in Sources */,
 				7CC8631D2CCF5E3A00C1F2F2 /* CHGameInfo.swift in Sources */,
+				7C01FA712CD3579400DA5BF0 /* CHGridGenerator.swift in Sources */,
 				7CC862F52CCF50EA00C1F2F2 /* CHGameScene.swift in Sources */,
 				7CC8631C2CCF5E3A00C1F2F2 /* CHStartState.swift in Sources */,
 			);

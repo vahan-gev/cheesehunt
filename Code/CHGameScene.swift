@@ -64,10 +64,21 @@ extension CHGameScene {
 
         gameInfo?.reset()
         scoreLabel.text = "\(gameInfo?.score ?? 0)"
-        scoreLabel.alpha = 0.0
+        scoreLabel.alpha = 1.0
+    }
+    
+    func incrementScore() {
+        gameInfo?.score += 1
+        scoreLabel.text = "\(gameInfo?.score ?? 0)"
     }
     
     override func update(_ currentTime: TimeInterval) {
         context.stateMachine?.update(deltaTime: currentTime)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let state = context.stateMachine?.currentState as? CHGameState {
+            state.touchesBegan(touches, with: event)
+        }
     }
 }

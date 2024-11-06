@@ -12,6 +12,7 @@ class CHStartState: CHGeneralState {
     private var coolDownDuration: TimeInterval = 0.7
     
     let menuNode = SKNode()
+    let logo = SKSpriteNode(imageNamed: "logo")
     let buttonNode = SKSpriteNode(imageNamed: "play")
     let mundurik = SKSpriteNode(imageNamed: "mundurik")
     
@@ -30,8 +31,8 @@ class CHStartState: CHGeneralState {
     }
     
     override func willExit(to nextState: GKState) {
-        menuNode.removeAllActions()
-        menuNode.run(SKAction.fadeOut(withDuration: 0.3)) {
+        self.menuNode.removeAllActions()
+        self.menuNode.run(SKAction.fadeOut(withDuration: 0.1)) {
             self.menuNode.removeAllChildren()
             self.menuNode.removeFromParent()
         }
@@ -52,15 +53,23 @@ class CHStartState: CHGeneralState {
 // MARK: Setup
 extension CHStartState {
     func setupUI() {
-        buttonNode.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.midY)
-        buttonNode.size = CGSize(width: 100, height: 100)
-        buttonNode.zPosition = 1
-        menuNode.addChild(buttonNode)
+        self.menuNode.run(SKAction.fadeIn(withDuration: 0.2))
+        
+        self.logo.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.midY + 200)
+        self.logo.size = CGSize(width: 290, height: 280)
+        self.logo.zPosition = 1
+        self.menuNode.addChild(self.logo)
+        
+        self.buttonNode.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.midY)
+        self.buttonNode.size = CGSize(width: 100, height: 100)
+        self.buttonNode.zPosition = 1
+        self.menuNode.addChild(self.buttonNode)
 
-        mundurik.size = CGSize(width: 365, height: 332.56)
-        mundurik.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.minY + 50)
-        menuNode.addChild(mundurik)
-        gameScene.addChild(menuNode)
+        self.mundurik.size = CGSize(width: 365, height: 332.56)
+        self.mundurik.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.minY + 50)
+        self.menuNode.addChild(self.mundurik)
+        
+        self.gameScene.addChild(self.menuNode)
     }
 }
 

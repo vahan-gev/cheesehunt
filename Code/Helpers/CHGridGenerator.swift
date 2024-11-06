@@ -7,14 +7,14 @@
 
 enum BlockType {
     case empty
-    case wall
+    case poop
     case cheese
     case obstacle
 }
 
 class GridGenerator {
-    private let WIDTH = 7
-    private let HEIGHT = 10
+    let WIDTH = 7
+    let HEIGHT = 10
     
     struct Position: Hashable {
         let x: Int
@@ -51,7 +51,7 @@ class GridGenerator {
                 
                 if newX >= 0 && newX < WIDTH &&
                     newY >= 0 && newY < HEIGHT &&
-                    grid[newY][newX] != .wall &&
+                    grid[newY][newX] != .poop &&
                     grid[newY][newX] != .obstacle {
                     queue.append(newPosition)
                 }
@@ -70,9 +70,9 @@ class GridGenerator {
         grid[1][3] = .obstacle
         grid[3][1] = .obstacle
         
-        grid[6][0] = .wall
-        grid[0][4] = .wall
-        grid[6][4] = .wall
+        grid[6][0] = .poop
+        grid[0][4] = .poop
+        grid[6][4] = .poop
         
         return grid
     }
@@ -88,7 +88,7 @@ class GridGenerator {
             for y in 0..<HEIGHT {
                 for x in 0..<WIDTH {
                     if !(x == 0 && y == 0) && Double.random(in: 0...1) < 0.2 {
-                        grid[y][x] = .wall
+                        grid[y][x] = .poop
                     }
                 }
             }
@@ -170,7 +170,7 @@ extension GridGenerator {
                 let symbol: String
                 switch cell {
                 case .empty: symbol = "⬜️"
-                case .wall: symbol = "⬛️"
+                case .poop: symbol = "💩"
                 case .cheese: symbol = "🧀"
                 case .obstacle: symbol = "❌"
                 }

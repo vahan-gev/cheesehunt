@@ -34,7 +34,7 @@ class CHGameScene: SKScene {
 extension CHGameScene {
     func setupScene() {
         self.setupCamera()
-        self.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1.0)
+        self.backgroundColor = UIColor(red: 1, green: (235/255), blue: (216/255), alpha: 1.0)
     }
     
     private func setupCamera() {
@@ -45,7 +45,7 @@ extension CHGameScene {
             addChild(gameCamera)
             
             scoreLabel.position = CGPoint(x: size.width * 0.4, y: size.height * 0.4)
-            scoreLabel.fontColor = .white
+            scoreLabel.fontColor = .black
             scoreLabel.fontSize = 50
             scoreLabel.zPosition = 1000
             scoreLabel.text = "\(gameInfo?.score ?? 0)"

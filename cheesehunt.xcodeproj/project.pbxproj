@@ -10,6 +10,7 @@
 		7C01FA712CD3579400DA5BF0 /* CHGridGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C01FA702CD3578D00DA5BF0 /* CHGridGenerator.swift */; };
 		7C14F9AA2CD83C06005E7675 /* CHGeneralState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C14F9A92CD83BFF005E7675 /* CHGeneralState.swift */; };
 		7C14F9AC2CD83C78005E7675 /* CHGameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C14F9AB2CD83C74005E7675 /* CHGameState.swift */; };
+		7C2851B52CDC3BE9006206E1 /* CHEndState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2851B42CDC3BE9006206E1 /* CHEndState.swift */; };
 		7CC862F32CCF50C700C1F2F2 /* CHGameContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC862F22CCF50C300C1F2F2 /* CHGameContext.swift */; };
 		7CC862F52CCF50EA00C1F2F2 /* CHGameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC862F42CCF50E800C1F2F2 /* CHGameScene.swift */; };
 		7CC863042CCF514F00C1F2F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7CC862FC2CCF514F00C1F2F2 /* Assets.xcassets */; };
@@ -26,6 +27,7 @@
 		7C01FA702CD3578D00DA5BF0 /* CHGridGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHGridGenerator.swift; sourceTree = "<group>"; };
 		7C14F9A92CD83BFF005E7675 /* CHGeneralState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHGeneralState.swift; sourceTree = "<group>"; };
 		7C14F9AB2CD83C74005E7675 /* CHGameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHGameState.swift; sourceTree = "<group>"; };
+		7C2851B42CDC3BE9006206E1 /* CHEndState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHEndState.swift; sourceTree = "<group>"; };
 		7CC862F22CCF50C300C1F2F2 /* CHGameContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHGameContext.swift; sourceTree = "<group>"; };
 		7CC862F42CCF50E800C1F2F2 /* CHGameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHGameScene.swift; sourceTree = "<group>"; };
 		7CC862FC2CCF514F00C1F2F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				7C14F9AB2CD83C74005E7675 /* CHGameState.swift */,
 				7C14F9A92CD83BFF005E7675 /* CHGeneralState.swift */,
 				7CC8631A2CCF5E3A00C1F2F2 /* CHStartState.swift */,
+				7C2851B42CDC3BE9006206E1 /* CHEndState.swift */,
 			);
 			path = States;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 			files = (
 				7CC8631E2CCF5E3A00C1F2F2 /* CHLayoutInfo.swift in Sources */,
 				7C14F9AA2CD83C06005E7675 /* CHGeneralState.swift in Sources */,
+				7C2851B52CDC3BE9006206E1 /* CHEndState.swift in Sources */,
 				7CC863122CCF5E2300C1F2F2 /* GameContext.swift in Sources */,
 				7CC863132CCF5E2300C1F2F2 /* GameType.swift in Sources */,
 				7CC863142CCF5E2300C1F2F2 /* GameModeType.swift in Sources */,

@@ -27,7 +27,8 @@ class CHGameContext {
         stateMachine = GKStateMachine(
             states: [
                 CHStartState(scene: scene, context: self),
-                CHGameState(scene: scene, context: self)
+                CHGameState(scene: scene, context: self),
+                CHEndState(scene: scene, context: self)
             ]
         )
     }

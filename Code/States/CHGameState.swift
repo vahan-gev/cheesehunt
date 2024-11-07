@@ -22,12 +22,24 @@
             super.init(gameScene: scene, context: context)
         }
         
+        override func isValidNextState(_ stateClass: AnyClass) -> Bool {
+            return true
+        }
+        
         override func didEnter(from previousState: GKState?) {
             print("did enter GameState")
             setupUI()
             grid = generator.generateGrid()
             generator.printGrid(grid)
             renderGrid()
+        }
+        
+        override func willExit(to nextState: GKState) {
+            self.containerNode.removeAllActions()
+            self.containerNode.run(SKAction.fadeOut(withDuration: 0.1)) {
+                self.containerNode.removeAllChildren()
+                self.containerNode.removeFromParent()
+            }
         }
         
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -46,6 +58,11 @@
                 } else if grid[gridY][gridX] == .poop || grid[gridY][gridX] == .obstacle {
                     context.gameInfo.decrementLives(by: 1)
                     updateLivesDisplay()
+                    if context.gameInfo.lives <= 0{
+                        //go to end state
+                        gameScene.context.stateMachine?.enter(CHEndState.self)
+                        context.gameInfo.reset()
+                    }
                 }
             }
         }
@@ -54,6 +71,8 @@
     // MARK: Setup
     extension CHGameState {
         func setupUI() {
+            self.containerNode.run(SKAction.fadeIn(withDuration: 0.2))
+
             let effectiveTileSize = tileSize + padding
             let gridWidth = CGFloat(generator.WIDTH) * effectiveTileSize
             let gridHeight = CGFloat(generator.HEIGHT) * effectiveTileSize

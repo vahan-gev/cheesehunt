@@ -77,7 +77,6 @@ extension CHStartState {
 extension CHStartState {
     func handleTap(_ touches: Set<UITouch>) {
         print("tapping")
-        gameScene.incrementScore()
     }
     
     func animateLabel(_ label: SKLabelNode) {

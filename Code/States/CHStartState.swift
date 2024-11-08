@@ -13,11 +13,10 @@ class CHStartState: CHGeneralState {
     
     let menuNode = SKNode()
     let logo = SKSpriteNode(imageNamed: "logo")
-    let buttonNode = SKSpriteNode(imageNamed: "play")
+    let buttonNode = SKSpriteNode(imageNamed: "play_button")
     let mundurik = SKSpriteNode(imageNamed: "mundurik")
     
     init(scene: CHGameScene, context: CHGameContext) {
-
         super.init(gameScene: scene, context: context)
     }
     
@@ -28,6 +27,8 @@ class CHStartState: CHGeneralState {
     override func didEnter(from previousState: GKState?) {
         print("did enter StartState")
         setupUI()
+        context.gameInfo.reset()
+        gameScene.updateScore()
     }
     
     override func willExit(to nextState: GKState) {
@@ -44,8 +45,6 @@ class CHStartState: CHGeneralState {
         
         if buttonNode.contains(touchLocation) {
             gameScene.context.stateMachine?.enter(CHGameState.self)
-        } else {
-            handleTap(touches)
         }
     }
 }
@@ -56,7 +55,7 @@ extension CHStartState {
         self.menuNode.run(SKAction.fadeIn(withDuration: 0.2))
         
         self.logo.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.midY + 200)
-        self.logo.size = CGSize(width: 290, height: 280)
+        self.logo.size = CGSize(width: 200, height: 200)
         self.logo.zPosition = 1
         self.menuNode.addChild(self.logo)
         
@@ -75,10 +74,6 @@ extension CHStartState {
 
 // MARK: Helpers
 extension CHStartState {
-    func handleTap(_ touches: Set<UITouch>) {
-        print("tapping")
-    }
-    
     func animateLabel(_ label: SKLabelNode) {
         let fadeIn = SKAction.fadeIn(withDuration: coolDownDuration * 2/3)
         let fadeOut = SKAction.fadeOut(withDuration: coolDownDuration * 1/3)

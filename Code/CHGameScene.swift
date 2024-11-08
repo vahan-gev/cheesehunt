@@ -68,6 +68,10 @@ extension CHGameScene {
         scoreLabel.alpha = 1.0
     }
     
+    func updateScore() {
+        scoreLabel.text = "\(gameInfo?.score ?? 0)"
+    }
+    
     func incrementScore() {
         gameInfo?.score += 1
         scoreLabel.text = "\(gameInfo?.score ?? 0)"

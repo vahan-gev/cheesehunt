@@ -14,9 +14,12 @@
         let gridNode = SKNode()
         let livesNode = SKNode()
         private var grid: [[BlockType]] = []
-        private let tileSize: CGFloat = 50
-        private let padding: CGFloat = 2
+        private let tileSize: CGFloat = 70
+        private let padding: CGFloat = 3
         private var tileNodes: [[SKSpriteNode]] = []
+        
+        private var isGridRevealed = false
+        private var countdownLabel: SKLabelNode!
         
         init(scene: CHGameScene, context: CHGameContext) {
             super.init(gameScene: scene, context: context)
@@ -30,8 +33,10 @@
             print("did enter GameState")
             setupUI()
             grid = generator.generateGrid()
-            generator.printGrid(grid)
+            context.gameInfo.reset()
+            gameScene.updateScore()
             renderGrid()
+            showGrid()
         }
         
         override func willExit(to nextState: GKState) {
@@ -39,10 +44,15 @@
             self.containerNode.run(SKAction.fadeOut(withDuration: 0.1)) {
                 self.containerNode.removeAllChildren()
                 self.containerNode.removeFromParent()
+                self.gridNode.removeAllChildren()
+                self.gridNode.removeFromParent()
+                self.livesNode.removeAllChildren()
+                self.livesNode.removeFromParent()
             }
         }
         
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            if isGridRevealed { return }
             guard let touch = touches.first else { return }
             let touchLocation = touch.location(in: gridNode)
             
@@ -51,17 +61,24 @@
             let gridY = Int((CGFloat(generator.HEIGHT) * effectiveTileSize / 2 - touchLocation.y) / effectiveTileSize)
             
             if gridX >= 0 && gridX < generator.WIDTH && gridY >= 0 && gridY < generator.HEIGHT {
-                print("Tapped tile at: (\(gridX), \(gridY)) - Type: \(grid[gridY][gridX])")
-                updateTileTexture(at: gridX, y: gridY)
+//                print("Tapped tile at: (\(gridX), \(gridY)) - Type: \(grid[gridY][gridX])")
+                revealTileTexture(at: gridX, y: gridY)
                 if grid[gridY][gridX] == .cheese {
-                    gameScene.incrementScore()
+                    generator.cheeseCount -= 1
+                    if generator.cheeseCount == 0 {
+                        gameScene.incrementScore()
+                        gridNode.removeAllChildren()
+                        gridNode.removeAllActions()
+                        grid = generator.generateGrid()
+                        generator.printGrid(grid)
+                        renderGrid()
+                        showGrid()
+                    }
                 } else if grid[gridY][gridX] == .poop || grid[gridY][gridX] == .obstacle {
                     context.gameInfo.decrementLives(by: 1)
                     updateLivesDisplay()
                     if context.gameInfo.lives <= 0{
-                        //go to end state
                         gameScene.context.stateMachine?.enter(CHEndState.self)
-                        context.gameInfo.reset()
                     }
                 }
             }
@@ -83,6 +100,8 @@
             livesNode.position = .zero
             
             setupLives(gridWidth: gridWidth, gridHeight: gridHeight, effectiveTileSize: effectiveTileSize)
+            containerNode.addChild(gridNode)
+            containerNode.addChild(livesNode)
             gameScene.addChild(containerNode)
         }
         
@@ -91,17 +110,16 @@
             let startY = gridHeight / 2
             
             for i in 0..<context.gameInfo.lives {
-                let x = startX + effectiveTileSize/2 + (effectiveTileSize * 1.1 * CGFloat(i))
-                let y = startY + effectiveTileSize
+                let x = startX + effectiveTileSize / 2 + (effectiveTileSize * 0.7 * 1.1 * CGFloat(i))
+                let y = startY + effectiveTileSize / 2
                 let cheeseNode = createCheeseNode(
                     x: x,
                     y: y,
-                    width: effectiveTileSize,
-                    height: effectiveTileSize
+                    width: effectiveTileSize * 0.7,
+                    height: effectiveTileSize * 0.7
                 )
                 livesNode.addChild(cheeseNode)
             }
-            containerNode.addChild(livesNode)
         }
         
         private func updateLivesDisplay() {
@@ -113,13 +131,13 @@
             let startX = -gridWidth / 2
             let startY = gridHeight / 2
              for i in 0..<context.gameInfo.lives {
-                let x = startX + effectiveTileSize/2 + (effectiveTileSize * 1.1 * CGFloat(i))
-                let y = startY + effectiveTileSize
+                let x = startX + effectiveTileSize / 2 + (effectiveTileSize * 0.7 * 1.1 * CGFloat(i))
+                let y = startY + effectiveTileSize / 2
                 let cheeseNode = createCheeseNode(
                     x: x,
                     y: y,
-                    width: effectiveTileSize,
-                    height: effectiveTileSize
+                    width: effectiveTileSize * 0.7,
+                    height: effectiveTileSize * 0.7
                 )
                 livesNode.addChild(cheeseNode)
             }
@@ -146,7 +164,6 @@
                     gridNode.addChild(tile)
                 }
             }
-            containerNode.addChild(gridNode)
         }
         
         private func createTile(for type: BlockType) -> SKSpriteNode {
@@ -190,7 +207,7 @@
             }
         }
         
-        private func updateTileTexture(at x: Int, y: Int) {
+        private func revealTileTexture(at x: Int, y: Int) {
             let tile = tileNodes[y][x]
             let currentType = grid[y][x]
             
@@ -207,3 +224,61 @@
             tile.run(sequence)
         }
     }
+
+
+// MARK: Grid Helpers
+extension CHGameState {
+    func showGrid() {
+        for (y, row) in grid.enumerated() {
+            for (x, type) in row.enumerated() {
+                let tile = tileNodes[y][x]
+                tile.texture = SKTexture(imageNamed: getTextureNameForType(type))
+            }
+        }
+        
+        countdownLabel = SKLabelNode(fontNamed: "Futura-Medium")
+        countdownLabel.fontSize = 65
+        countdownLabel.fontColor = .black
+        countdownLabel.position = CGPoint(x: 0, y: 0)
+        countdownLabel.zPosition = 10
+        countdownLabel.horizontalAlignmentMode = .center
+        countdownLabel.verticalAlignmentMode = .center
+        containerNode.addChild(countdownLabel)
+        
+        var timeLeft = 4
+        countdownLabel.text = "\(timeLeft)"
+        
+        let wait = SKAction.wait(forDuration: 1.0)
+        let countdown = SKAction.run { [weak self] in
+            timeLeft -= 1
+            self?.countdownLabel.text = "\(timeLeft)"
+        }
+        
+        let sequence = SKAction.sequence([
+            SKAction.repeat(SKAction.sequence([countdown, wait]), count: 3),
+            SKAction.run { [weak self] in
+                self?.hideGrid()
+            }
+        ])
+        
+        containerNode.run(sequence)
+    }
+
+    func hideGrid() {
+        countdownLabel.removeFromParent()
+        
+        for (_, row) in tileNodes.enumerated() {
+            for (_, tile) in row.enumerated() {
+                let fadeOut = SKAction.fadeOut(withDuration: 0.1)
+                let changeTexture = SKAction.run { [weak self] in
+                    tile.texture = SKTexture(imageNamed: self?.getDefaultNameForTexture(.empty) ?? "question_tile")
+                }
+                let fadeIn = SKAction.fadeIn(withDuration: 0.1)
+                
+                let sequence = SKAction.sequence([fadeOut, changeTexture, fadeIn])
+                tile.run(sequence)
+            }
+        }
+        isGridRevealed = false
+    }
+}

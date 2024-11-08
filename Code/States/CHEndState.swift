@@ -10,8 +10,8 @@ import SpriteKit
 
 class CHEndState: CHGeneralState {
     let menuNode = SKNode()
-    let replay = SKSpriteNode(imageNamed: "replay")
-    let home = SKSpriteNode(imageNamed: "home")
+    let replay = SKSpriteNode(imageNamed: "reload_button")
+    let home = SKSpriteNode(imageNamed: "home_button")
     
     init(scene: CHGameScene, context: CHGameContext) {
 
@@ -38,7 +38,7 @@ class CHEndState: CHGeneralState {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
-        let touchLocation = touch.location(in: gameScene)
+        let touchLocation = touch.location(in: menuNode)
         
         if replay.contains(touchLocation) {
             gameScene.context.stateMachine?.enter(CHGameState.self)

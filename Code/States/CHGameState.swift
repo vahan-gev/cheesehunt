@@ -9,17 +9,18 @@
     import SpriteKit
 
     class CHGameState: CHGeneralState {
+        var layoutInfo = CHLayoutInfo()
         let generator = GridGenerator()
         let containerNode = SKNode()
         let gridNode = SKNode()
         let livesNode = SKNode()
         private var grid: [[BlockType]] = []
-        private let tileSize: CGFloat = 70
-        private let padding: CGFloat = 3
         private var tileNodes: [[SKSpriteNode]] = []
         
         private var isGridRevealed = false
         private var countdownLabel: SKLabelNode!
+        
+        private var revealedTiles: [[Bool]] = []
         
         init(scene: CHGameScene, context: CHGameContext) {
             super.init(gameScene: scene, context: context)
@@ -40,28 +41,20 @@
         }
         
         override func willExit(to nextState: GKState) {
-            self.containerNode.removeAllActions()
-            self.containerNode.run(SKAction.fadeOut(withDuration: 0.1)) {
-                self.containerNode.removeAllChildren()
-                self.containerNode.removeFromParent()
-                self.gridNode.removeAllChildren()
-                self.gridNode.removeFromParent()
-                self.livesNode.removeAllChildren()
-                self.livesNode.removeFromParent()
-            }
+            resetUI()
         }
         
         override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             if isGridRevealed { return }
             guard let touch = touches.first else { return }
             let touchLocation = touch.location(in: gridNode)
-            
-            let effectiveTileSize = tileSize + padding
-            let gridX = Int((touchLocation.x + (CGFloat(generator.WIDTH) * effectiveTileSize / 2)) / effectiveTileSize)
-            let gridY = Int((CGFloat(generator.HEIGHT) * effectiveTileSize / 2 - touchLocation.y) / effectiveTileSize)
+            let gridX = Int((touchLocation.x + (CGFloat(generator.WIDTH) * layoutInfo.effectiveTileSize / 2)) / layoutInfo.effectiveTileSize)
+            let gridY = Int((CGFloat(generator.HEIGHT) * layoutInfo.effectiveTileSize / 2 - touchLocation.y) / layoutInfo.effectiveTileSize)
             
             if gridX >= 0 && gridX < generator.WIDTH && gridY >= 0 && gridY < generator.HEIGHT {
 //                print("Tapped tile at: (\(gridX), \(gridY)) - Type: \(grid[gridY][gridX])")
+                if revealedTiles[gridY][gridX] { return }
+                revealedTiles[gridY][gridX] = true
                 revealTileTexture(at: gridX, y: gridY)
                 if grid[gridY][gridX] == .cheese {
                     generator.cheeseCount -= 1
@@ -90,19 +83,33 @@
         func setupUI() {
             self.containerNode.run(SKAction.fadeIn(withDuration: 0.2))
 
-            let effectiveTileSize = tileSize + padding
-            let gridWidth = CGFloat(generator.WIDTH) * effectiveTileSize
-            let gridHeight = CGFloat(generator.HEIGHT) * effectiveTileSize
+            let gridWidth = CGFloat(generator.WIDTH) * layoutInfo.effectiveTileSize
+            let gridHeight = CGFloat(generator.HEIGHT) * layoutInfo.effectiveTileSize
             
             containerNode.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.midY)
             
             gridNode.position = .zero
             livesNode.position = .zero
             
-            setupLives(gridWidth: gridWidth, gridHeight: gridHeight, effectiveTileSize: effectiveTileSize)
+            setupLives(gridWidth: gridWidth, gridHeight: gridHeight, effectiveTileSize: layoutInfo.effectiveTileSize)
             containerNode.addChild(gridNode)
             containerNode.addChild(livesNode)
             gameScene.addChild(containerNode)
+        }
+        
+        func resetUI() {
+            self.containerNode.removeAllActions()
+            self.containerNode.run(SKAction.fadeOut(withDuration: 0.1)) {
+                self.containerNode.removeAllChildren()
+                self.containerNode.removeFromParent()
+                self.gridNode.removeAllChildren()
+                self.gridNode.removeFromParent()
+                self.livesNode.removeAllChildren()
+                self.livesNode.removeFromParent()
+                self.revealedTiles = []
+                self.isGridRevealed = false
+                self.tileNodes = []
+            }
         }
         
         func setupLives(gridWidth: CGFloat, gridHeight: CGFloat, effectiveTileSize: CGFloat) {
@@ -110,13 +117,13 @@
             let startY = gridHeight / 2
             
             for i in 0..<context.gameInfo.lives {
-                let x = startX + effectiveTileSize / 2 + (effectiveTileSize * 0.7 * 1.1 * CGFloat(i))
-                let y = startY + effectiveTileSize / 2
+                let x = startX + layoutInfo.effectiveTileSize / 2 + (layoutInfo.effectiveTileSize * 0.7 * 1.1 * CGFloat(i))
+                let y = startY + layoutInfo.effectiveTileSize / 2
                 let cheeseNode = createCheeseNode(
                     x: x,
                     y: y,
-                    width: effectiveTileSize * 0.7,
-                    height: effectiveTileSize * 0.7
+                    width: layoutInfo.effectiveTileSize * 0.7,
+                    height: layoutInfo.effectiveTileSize * 0.7
                 )
                 livesNode.addChild(cheeseNode)
             }
@@ -125,19 +132,18 @@
         private func updateLivesDisplay() {
             livesNode.removeAllChildren()
             
-            let effectiveTileSize = tileSize + padding
-            let gridWidth = CGFloat(generator.WIDTH) * effectiveTileSize
-            let gridHeight = CGFloat(generator.HEIGHT) * effectiveTileSize
+            let gridWidth = CGFloat(generator.WIDTH) * layoutInfo.effectiveTileSize
+            let gridHeight = CGFloat(generator.HEIGHT) * layoutInfo.effectiveTileSize
             let startX = -gridWidth / 2
             let startY = gridHeight / 2
              for i in 0..<context.gameInfo.lives {
-                let x = startX + effectiveTileSize / 2 + (effectiveTileSize * 0.7 * 1.1 * CGFloat(i))
-                let y = startY + effectiveTileSize / 2
+                 let x = startX + layoutInfo.effectiveTileSize / 2 + (layoutInfo.effectiveTileSize * 0.7 * 1.1 * CGFloat(i))
+                 let y = startY + layoutInfo.effectiveTileSize / 2
                 let cheeseNode = createCheeseNode(
                     x: x,
                     y: y,
-                    width: effectiveTileSize * 0.7,
-                    height: effectiveTileSize * 0.7
+                    width: layoutInfo.effectiveTileSize * 0.7,
+                    height: layoutInfo.effectiveTileSize * 0.7
                 )
                 livesNode.addChild(cheeseNode)
             }
@@ -145,10 +151,9 @@
         
         func renderGrid() {
             tileNodes = Array(repeating: Array(repeating: SKSpriteNode(), count: generator.WIDTH), count: generator.HEIGHT)
-            
-            let effectiveTileSize = tileSize + padding
-            let gridWidth = CGFloat(generator.WIDTH) * effectiveTileSize
-            let gridHeight = CGFloat(generator.HEIGHT) * effectiveTileSize
+            revealedTiles = Array(repeating: Array(repeating: false, count: generator.WIDTH), count: generator.HEIGHT)
+            let gridWidth = CGFloat(generator.WIDTH) * layoutInfo.effectiveTileSize
+            let gridHeight = CGFloat(generator.HEIGHT) * layoutInfo.effectiveTileSize
             
             let startX = -gridWidth / 2
             let startY = gridHeight / 2
@@ -157,8 +162,8 @@
                 for (x, type) in row.enumerated() {
                     let tile = createTile(for: type)
                     tile.position = CGPoint(
-                        x: startX + (CGFloat(x) * effectiveTileSize) + tileSize/2,
-                        y: startY - (CGFloat(y) * effectiveTileSize) - tileSize/2
+                        x: startX + (CGFloat(x) * layoutInfo.effectiveTileSize) + layoutInfo.tileSize/2,
+                        y: startY - (CGFloat(y) * layoutInfo.effectiveTileSize) - layoutInfo.tileSize/2
                     )
                     tileNodes[y][x] = tile
                     gridNode.addChild(tile)
@@ -169,7 +174,7 @@
         private func createTile(for type: BlockType) -> SKSpriteNode {
             let texture = getDefaultNameForTexture(type)
             let tile = SKSpriteNode(imageNamed: texture)
-            tile.size = CGSize(width: tileSize, height: tileSize)
+            tile.size = CGSize(width: layoutInfo.tileSize, height: layoutInfo.tileSize)
             return tile
         }
         
@@ -229,6 +234,7 @@
 // MARK: Grid Helpers
 extension CHGameState {
     func showGrid() {
+        isGridRevealed = true
         for (y, row) in grid.enumerated() {
             for (x, type) in row.enumerated() {
                 let tile = tileNodes[y][x]

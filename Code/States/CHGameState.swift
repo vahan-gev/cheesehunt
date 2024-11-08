@@ -12,8 +12,15 @@
         var layoutInfo = CHLayoutInfo()
         let generator = GridGenerator()
         let containerNode = SKNode()
+        let controlContainer = SKNode()
         let gridNode = SKNode()
         let livesNode = SKNode()
+        
+        let topButton = SKSpriteNode(imageNamed: "Top")
+        let bottomButton = SKSpriteNode(imageNamed: "Bottom")
+        let leftButton = SKSpriteNode(imageNamed: "Left")
+        let rightButton = SKSpriteNode(imageNamed: "Right")
+        
         private var grid: [[BlockType]] = []
         private var tileNodes: [[SKSpriteNode]] = []
         
@@ -84,6 +91,7 @@
     extension CHGameState {
         func setupUI() {
             self.containerNode.run(SKAction.fadeIn(withDuration: 0.2))
+            self.controlContainer.run(SKAction.fadeIn(withDuration: 0.2))
 
             let gridWidth = CGFloat(generator.WIDTH) * layoutInfo.effectiveTileSize
             let gridHeight = CGFloat(generator.HEIGHT) * layoutInfo.effectiveTileSize
@@ -97,6 +105,42 @@
             containerNode.addChild(gridNode)
             containerNode.addChild(livesNode)
             gameScene.addChild(containerNode)
+            
+            setupButtons()
+
+        }
+        
+        func setupButtons() {
+            let buttonWidth: CGFloat = 60
+            let buttonHeight: CGFloat = 60
+            let buttonSize = CGSize(width: buttonWidth, height: buttonHeight)
+            
+            let buttonDistance: CGFloat = 60
+            
+            let topButton = SKSpriteNode(imageNamed: "Top")
+            topButton.size = buttonSize
+            topButton.position = CGPoint(x: 0, y: buttonDistance)
+            
+            let bottomButton = SKSpriteNode(imageNamed: "Bottom")
+            bottomButton.size = buttonSize
+            bottomButton.position = CGPoint(x: 0, y: -buttonDistance)
+            
+            let leftButton = SKSpriteNode(imageNamed: "Left")
+            leftButton.size = buttonSize
+            leftButton.position = CGPoint(x: -buttonDistance, y: 0)
+            
+            let rightButton = SKSpriteNode(imageNamed: "Right")
+            rightButton.size = buttonSize
+            rightButton.position = CGPoint(x: buttonDistance, y: 0)
+            
+            controlContainer.addChild(topButton)
+            controlContainer.addChild(bottomButton)
+            controlContainer.addChild(leftButton)
+            controlContainer.addChild(rightButton)
+            
+            controlContainer.position = CGPoint(x: gameScene.frame.midX, y: gameScene.frame.minY + 120)
+            
+            gameScene.addChild(controlContainer)
         }
         
         func resetUI() {
@@ -108,6 +152,8 @@
                 self.gridNode.removeFromParent()
                 self.livesNode.removeAllChildren()
                 self.livesNode.removeFromParent()
+                self.controlContainer.removeAllChildren()
+                self.controlContainer.removeFromParent()
                 self.revealedTiles = []
                 self.isGridRevealed = false
                 self.tileNodes = []

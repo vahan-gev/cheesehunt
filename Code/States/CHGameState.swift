@@ -52,12 +52,13 @@
             let gridY = Int((CGFloat(generator.HEIGHT) * layoutInfo.effectiveTileSize / 2 - touchLocation.y) / layoutInfo.effectiveTileSize)
             
             if gridX >= 0 && gridX < generator.WIDTH && gridY >= 0 && gridY < generator.HEIGHT {
-//                print("Tapped tile at: (\(gridX), \(gridY)) - Type: \(grid[gridY][gridX])")
+                //print("Tapped tile at: (\(gridX), \(gridY)) - Type: \(grid[gridY][gridX])")
                 if revealedTiles[gridY][gridX] { return }
                 revealedTiles[gridY][gridX] = true
                 revealTileTexture(at: gridX, y: gridY)
                 if grid[gridY][gridX] == .cheese {
                     generator.cheeseCount -= 1
+                    //playLightHaptic()
                     if generator.cheeseCount == 0 {
                         gameScene.incrementScore()
                         gridNode.removeAllChildren()
@@ -70,6 +71,7 @@
                 } else if grid[gridY][gridX] == .poop || grid[gridY][gridX] == .obstacle {
                     context.gameInfo.decrementLives(by: 1)
                     updateLivesDisplay()
+                    //playHeavyHaptic()
                     if context.gameInfo.lives <= 0{
                         gameScene.context.stateMachine?.enter(CHEndState.self)
                     }
@@ -286,5 +288,19 @@ extension CHGameState {
             }
         }
         isGridRevealed = false
+    }
+}
+
+
+// MARK: Vibration Helpers
+extension CHGameState {
+    private func playLightHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+    }
+
+    private func playHeavyHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred()
     }
 }
